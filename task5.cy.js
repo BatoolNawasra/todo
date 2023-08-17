@@ -169,7 +169,6 @@ describe('example to-do app', () => {
     // Verify that "Clear All Completed" button is initially hidden
     cy.get('.clear-completed')
       .should('not.be.visible');
-
     // Mark a task as completed
     // cy.get('.toggle')
     //   .first()
