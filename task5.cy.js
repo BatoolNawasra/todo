@@ -24,7 +24,7 @@ describe('example to-do app', () => {
   })//done
 
 
-  it('Mark New Added Task as Completed Verify it added to the completed list', () => {
+  it.only('Mark New Added Task as Completed Verify it added to the completed list', () => {
     // cy.get('.new-todo')
     // .clear()
     //.type('Second Task')
@@ -53,6 +53,7 @@ describe('example to-do app', () => {
     //   .click();
     helpers.Filter('Completed')
     cy.get('.main ul li').should('contain', 'Second Task');
+    helpers.ckeckcompleted('Second Task','true')
   });
 
 

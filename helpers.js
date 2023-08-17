@@ -1,6 +1,6 @@
 export const LOCATORS = {
     newTodo: '.new-todo',
-    items:'.main ul li'
+    items: '.main ul li'
 }
 
 export const addNewTask = (task) => {
@@ -29,8 +29,18 @@ export const containTask = (TaskName) => {
         .should('contain', TaskName)
 }
 
-export const ckeckStatus =(task ,expect ) => {
-if (expect=='Completed'){}
-else {}
+export const ckeckcompleted = (taskText, x) => {
+
+    if (x == 'true') {
+        cy.contains('.todo-list li', taskText)
+            .should('contain', taskText)
+            .should('have.class', 'completed');
+    }
+    else {
+        cy.contains('.todo-list li', taskText)
+            .should('contain', taskText)
+            .should('not.have.class', 'completed');
+    }
 
 }
+
