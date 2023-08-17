@@ -8,7 +8,7 @@ describe('example to-do app', () => {
     cy.visit('https://example.cypress.io/todo')
   })
 
-  it.only('Adding a new task and verify its added in task list', () => {
+  it('Adding a new task and verify its added in task list', () => {
     // cy.get('.new-todo')
     //   .clear()
     //   .type('First Task')
@@ -25,7 +25,7 @@ describe('example to-do app', () => {
   })//done
 
 
-  it.only('Mark New Added Task as Completed Verify it added to the completed list', () => {
+  it('Mark New Added Task as Completed Verify it added to the completed list', () => {
     // cy.get('.new-todo')
     // .clear()
     //.type('Second Task')
@@ -169,16 +169,17 @@ describe('example to-do app', () => {
 
 
 
-  it('"Clear All Completed" button Check visibility when changing from hidden to visible', () => {
+  it.only('"Clear All Completed" button Check visibility when changing from hidden to visible', () => {
 
     // Verify that "Clear All Completed" button is initially hidden
     cy.get('.clear-completed')
       .should('not.be.visible');
 
     // Mark a task as completed
-    cy.get('.toggle')
-      .first()
-      .check();
+    // cy.get('.toggle')
+    //   .first()
+    //   .check();
+    helpers.compeletExistTask('Pay electric bill')  
 
     // Verify that "Clear All Completed" button becomes visible within '.footer'
     cy.get('.footer').within(() => {
@@ -214,11 +215,12 @@ describe('example to-do app', () => {
 
 
 
-  it('Check Filter "Active"', () => {
+  it.only('Check Filter "Active"', () => {
     // Mark a task as completed
-    cy.get('.toggle')
-      .first()
-      .check();
+    // cy.get('.toggle')
+    //   .first()
+    //   .check();
+    helpers.compeletExistTask('Pay electric bill')  
 
     // Click on the "Active" filter
     // cy.contains('.filters li', 'Active')
@@ -227,6 +229,7 @@ describe('example to-do app', () => {
     // Verify that only active tasks are displayed using within() and each()
     cy.get('.todo-list').within(() => {
       cy.get('li').each(task => {
+        //helpers.ckeckcompleted(task,'fales')
         cy.wrap(task).should('not.have.class', 'completed');
       });
     });
@@ -236,9 +239,10 @@ describe('example to-do app', () => {
 
   it('Verify active items count matches the number at the bottom', () => {
     // Mark some tasks as completed
-    cy.get('.toggle')
-      .first()
-      .check()
+    // cy.get('.toggle')
+    //   .first()
+    //   .check()
+    helpers.compeletExistTask('Pay electric bill')  
 
     // Click on the "Active" filter
     // cy.contains('.filters li', 'Active')
@@ -337,7 +341,7 @@ describe('example to-do app', () => {
       });
   });//done
 
-  it.only('Check Fillter "ALL" - and Check the count of all tasks', () => {
+  it('Check Fillter "ALL" - and Check the count of all tasks', () => {
     // Add some tasks
     // cy.get('.new-todo')
     //   .type('Task 1{enter}')
