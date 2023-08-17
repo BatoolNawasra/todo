@@ -28,3 +28,9 @@ export const containTask = (TaskName) => {
     cy.get('.main ul li')
         .should('contain', TaskName)
 }
+
+export const ckeckStatus =(task ,expect ) => {
+if (expect=='Completed'){}
+else {}
+
+}
