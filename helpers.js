@@ -3,19 +3,25 @@ export const LOCATORS = {
     items: '.main ul li'
 }
 
-export const addNewTask = (task) => {
-    cy.get(LOCATORS.newTodo)
+export const addNewTask = (tasks) => {
+    tasks.forEach(task => {
+        cy.get(LOCATORS.newTodo)
         .clear()
         .type(task)
-        .type('{enter}')
+        .type('{enter}')     
+    });
+
 }
 
-export const compeletExistTask = (task) => {
-    cy.get('.main ul li')
-        .contains(task)
-        .parent()
-        .find('[type="checkbox"]')
-        .click();
+export const compeletExistTask = (tasks) => {
+tasks.forEach(task =>{
+    cy.get(LOCATORS.items)
+    .contains(task)
+    .parent()
+    .find('[type="checkbox"]')
+    .click();
+})
+ 
 
 }
 
@@ -24,14 +30,16 @@ export const Filter = (filterName) => {
         .click()
 
 }
-export const containTask = (TaskName) => {
+
+export const checkTaskexistance = (TaskName, shouldExist = true) => {
+    let status = shouldExist ? 'contain' : 'not.contain'
     cy.get('.main ul li')
-        .should('contain', TaskName)
+        .should(status, TaskName)
 }
 
-export const ckeckcompleted = (taskText, x) => {
-
-    if (x == 'true') {
+export const ckeckcompleted = (taskText, expectedStatus) => {
+    let status = expectedStatus ? true : fales
+    if (expectedStatus == true) {
         cy.contains('.todo-list li', taskText)
             //.should('contain', taskText)
             .should('have.class', 'completed')
@@ -59,7 +67,7 @@ export const ckeckcompleted = (taskText, x) => {
 
 }
 
-export const locaterLength =(locater) =>{
-
-    cy.get(locater).its('length')
-}
+// export const locaterLength =(locater) =>{
+// let x = 
+//     cy.get(locater).its('length')
+// }
