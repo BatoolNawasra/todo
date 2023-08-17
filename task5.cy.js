@@ -8,7 +8,7 @@ describe('example to-do app', () => {
     cy.visit('https://example.cypress.io/todo')
   })
 
-  it('Adding a new task and verify its added in task list', () => {
+  it.only('Adding a new task and verify its added in task list', () => {
     // cy.get('.new-todo')
     //   .clear()
     //   .type('First Task')
@@ -18,9 +18,10 @@ describe('example to-do app', () => {
     cy.get('.main ul ').within(() => {
       cy.contains('First Task')
     })
-    cy.get('.main ul li ')
-      .should('contain', 'First Task')
-
+    helpers.containTask('First Task')
+    // cy.get('.main ul li ')
+    //   .should('contain', 'First Task')
+    helpers.ckeckcompleted('First Task', 'fales')
   })//done
 
 
@@ -30,7 +31,7 @@ describe('example to-do app', () => {
     //.type('Second Task')
     //.type('{enter}');
     helpers.addNewTask('Second Task')
-    helpers.completExistTask('Second Task')
+    helpers.compeletExistTask('Second Task')
     // cy.get('.main ul li')
     //.contains('Second Task')
     //.parent()
@@ -39,21 +40,21 @@ describe('example to-do app', () => {
     //.click();
 
 
-    cy.get('.main ul li')
-      .contains('Second Task')
-      .parent()
-      .within(() => {
-        cy.get('[type="checkbox"]').as('checkbox'); // Alias the checkbox element
-      })
+    // cy.get('.main ul li')
+    // .contains('Second Task')
+    // .parent()
+    // .within(() => {
+    //   cy.get('[type="checkbox"]').as('checkbox'); // Alias the checkbox element
+    //   })
     // Verify that the checkbox is checked
-    cy.get('@checkbox').should('be.checked');
+    // cy.get('@checkbox').should('be.checked');
 
     // Verify that the task appears in the completed list
     // cy.contains('.filters li', 'Completed')
     //   .click();
     helpers.Filter('Completed')
-    cy.get('.main ul li').should('contain', 'Second Task');
-    helpers.ckeckcompleted('Second Task','true')
+    // cy.get('.main ul li').should('contain', 'Second Task');
+    helpers.ckeckcompleted('Second Task', 'true')
   });
 
 
@@ -74,11 +75,9 @@ describe('example to-do app', () => {
       .clear()
       .type('Edited Successfully {enter}')
 
-
-
     // Verify that the edited task is present in the list
-    cy.get('.main ul li').should('contain', 'Edited Successfully')
-
+    //cy.get('.main ul li').should('contain', 'Edited Successfully')
+    helpers.containTask('Edited Successfully')
   })//done
 
 
@@ -97,7 +96,7 @@ describe('example to-do app', () => {
     // Verify that the task is deleted
     cy.get('.main ul li')
       .should('not.contain', 'Pay electric bill')
-    //  .should('not.exist', 'Pay electric bill')
+    //  .should('not.exist', 'Pay electric bill') for dom elements not text 
   })//done
 
 
@@ -272,9 +271,9 @@ describe('example to-do app', () => {
     helpers.addNewTask('Task 1')
     helpers.addNewTask('Task 2')
     helpers.addNewTask('Task 3')
-    helpers.completExistTask('Task 1')
-    helpers.completExistTask('Task 2')
-    helpers.completExistTask('Task 3')
+    helpers.compeletExistTask('Task 1')
+    helpers.compeletExistTask('Task 2')
+    helpers.compeletExistTask('Task 3')
 
 
 
@@ -338,7 +337,7 @@ describe('example to-do app', () => {
       });
   });//done
 
-  it('Check Fillter "ALL" - and Check the count of all tasks', () => {
+  it.only('Check Fillter "ALL" - and Check the count of all tasks', () => {
     // Add some tasks
     // cy.get('.new-todo')
     //   .type('Task 1{enter}')
@@ -363,9 +362,9 @@ describe('example to-do app', () => {
     helpers.addNewTask('Task 1')
     helpers.addNewTask('Task 2')
     helpers.addNewTask('Task 3')
-    helpers.completExistTask('Task 1')
+    helpers.compeletExistTask('Task 1')
 
-    helpers.completExistTask('Task 3')
+    helpers.compeletExistTask('Task 3')
     // Calculate the total number of tasks (active + completed)
     let totalTasksCount = 0;
     let activeCount = 0;
@@ -385,17 +384,19 @@ describe('example to-do app', () => {
       // cy.contains('.filters li', 'Completed')
       //   .click();
       helpers.Filter('Completed')
-      cy.get('.completed').its('length').then(completedTasksCount => {
-        completedCount = completedTasksCount;
-        totalTasksCount = activeCount + completedCount;
+      cy.get('.completed').its('length')
+        // helpers.locaterLength('.completed')
+        .then(completedTasksCount => {
+          completedCount = completedTasksCount;
+          totalTasksCount = activeCount + completedCount;
 
-        // Visit the "All" filter
-        // cy.contains('.filters li', 'All')
-        //   .click();
-        helpers.Filter('All')
-        cy.get('.todo-list li').should('have.length', totalTasksCount);
+          // Visit the "All" filter
+          // cy.contains('.filters li', 'All')
+          //   .click();
+          helpers.Filter('All')
+          cy.get('.todo-list li').should('have.length', totalTasksCount);
 
-      });
+        });
     });
   });//done
 
@@ -405,10 +406,12 @@ describe('example to-do app', () => {
     helpers.addNewTask('Active')
 
     cy.get('.todo-list').within(() => {
-      // Check that each individual task list item has the class 'completed'
+
       cy.get('li')
         .should('contain', 'Active');
+
     });
+    helpers.containTask('Active')
   })
 
 })

@@ -10,7 +10,7 @@ export const addNewTask = (task) => {
         .type('{enter}')
 }
 
-export const completExistTask = (task) => {
+export const compeletExistTask = (task) => {
     cy.get('.main ul li')
         .contains(task)
         .parent()
@@ -33,14 +33,33 @@ export const ckeckcompleted = (taskText, x) => {
 
     if (x == 'true') {
         cy.contains('.todo-list li', taskText)
-            .should('contain', taskText)
-            .should('have.class', 'completed');
+            //.should('contain', taskText)
+            .should('have.class', 'completed')
+        cy.contains('.todo-list li', taskText)
+            .parent()
+            .within(() => {
+                cy.get('[type="checkbox"]')
+                    .should('be.checked');
+
+            })
     }
     else {
         cy.contains('.todo-list li', taskText)
-            .should('contain', taskText)
-            .should('not.have.class', 'completed');
+           // .should('contain', taskText)
+            .should('not.have.class', 'completed')
+        cy.contains('.todo-list li', taskText)
+            .parent()
+            .within(() => {
+                cy.get('[type="checkbox"]')
+                    .should('not.be.checked');
+
+            })
+
     }
 
 }
 
+export const locaterLength =(locater) =>{
+
+    cy.get(locater).its('length')
+}
