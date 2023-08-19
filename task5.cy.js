@@ -13,7 +13,7 @@ describe('example to-do app', () => {
     //   .clear()
     //   .type('First Task')
     //   .type('{enter}')
-    helpers.addNewTask('First Task')
+    helpers.addNewTask(['First Task'])
     // Verify that the added task is present in the list
     cy.get('.main ul ').within(() => {
       cy.contains('First Task')
@@ -21,7 +21,7 @@ describe('example to-do app', () => {
     helpers.checkTaskexistance('First Task')
     // cy.get('.main ul li ')
     //   .should('contain', 'First Task')
-    helpers.ckeckcompleted('First Task', 'fales')
+    helpers.checkCompleted({name:'First Task', clicked: false })
   })//done
 
 
@@ -30,8 +30,8 @@ describe('example to-do app', () => {
     // .clear()
     //.type('Second Task')
     //.type('{enter}');
-    helpers.addNewTask('Second Task')
-    helpers.compeletExistTask('Second Task')
+    helpers.addNewTask(['Second Task'])
+    helpers.compeletExistTask(['Second Task'])
     // cy.get('.main ul li')
     //.contains('Second Task')
     //.parent()
@@ -54,7 +54,7 @@ describe('example to-do app', () => {
     //   .click();
     helpers.Filter('Completed')
     // cy.get('.main ul li').should('contain', 'Second Task');
-    helpers.ckeckcompleted('Second Task', 'true')
+    helpers.checkCompleted({name:'Second Task', clicked:true})
   });
 
 
@@ -64,7 +64,7 @@ describe('example to-do app', () => {
     //.type('Third Task')
     //.type('{enter}')
 
-    helpers.addNewTask('Third Task')
+    helpers.addNewTask(['Third Task'])
 
     cy.get('.main ul li')
       .contains('Third Task')
@@ -105,7 +105,7 @@ describe('example to-do app', () => {
     // .clear()
     //.type('Fifth Task')
     //.type('{enter}')
-    helpers.addNewTask('Fifth Task')
+    helpers.addNewTask(['Fifth Task'])
 
     // Click the delete button even if it's hidden
     cy.get('section.main ul.todo-list li')
@@ -127,7 +127,7 @@ describe('example to-do app', () => {
     //.clear()
     //  .type('Sixth Task ')
     //.type('{enter}')
-    helpers.addNewTask('Sixth Task')
+    helpers.addNewTask(['Sixth Task'])
     // Get the number of active items from the todo count
     cy.get('.todo-count')
       .invoke('text')
@@ -164,7 +164,7 @@ describe('example to-do app', () => {
 
 
 
-  it.only('"Clear All Completed" button Check visibility when changing from hidden to visible', () => {
+  it('"Clear All Completed" button Check visibility when changing from hidden to visible', () => {
 
     // Verify that "Clear All Completed" button is initially hidden
     cy.get('.clear-completed')
@@ -173,7 +173,7 @@ describe('example to-do app', () => {
     // cy.get('.toggle')
     //   .first()
     //   .check();
-    helpers.compeletExistTask('Pay electric bill')
+    helpers.compeletExistTask(['Pay electric bill'])
 
     // Verify that "Clear All Completed" button becomes visible within '.footer'
     cy.get('.footer').within(() => {
@@ -209,12 +209,12 @@ describe('example to-do app', () => {
 
 
 
-  it.only('Check Filter "Active"', () => {
+  it('Check Filter "Active"', () => {
     // Mark a task as completed
     // cy.get('.toggle')
     //   .first()
     //   .check();
-    helpers.compeletExistTask('Pay electric bill')
+    helpers.compeletExistTask(['Pay electric bill'])
 
     // Click on the "Active" filter
     // cy.contains('.filters li', 'Active')
@@ -236,7 +236,7 @@ describe('example to-do app', () => {
     // cy.get('.toggle')
     //   .first()
     //   .check()
-    helpers.compeletExistTask('Pay electric bill')
+    helpers.compeletExistTask(['Pay electric bill'])
 
     // Click on the "Active" filter
     // cy.contains('.filters li', 'Active')
@@ -265,12 +265,9 @@ describe('example to-do app', () => {
     //   .type('Task 1{enter}')
     // .type('Task 2{enter}')
     //.type('Task 3{enter}')
-    helpers.addNewTask('Task 1')
-    helpers.addNewTask('Task 2')
-    helpers.addNewTask('Task 3')
-    helpers.compeletExistTask('Task 1')
-    helpers.compeletExistTask('Task 2')
-    helpers.compeletExistTask('Task 3')
+    helpers.addNewTask(['Task 1','Task 2','Task 3'])
+    helpers.compeletExistTask(['Task 1','Task 2','Task 3'])
+    
     // cy.contains('.filters li', 'Completed')
     //   .click() // go to completed tasks page 
     helpers.Filter('Completed')
@@ -289,7 +286,7 @@ describe('example to-do app', () => {
     //   .clear()
     //   .type('New Task {enter}')
 
-    helpers.addNewTask('New Task')
+    helpers.addNewTask(['New Task'])
     // Count the number of active tasks initially
     cy.get('.todo-list li')
       .should('not.have.class', 'completed')
@@ -349,12 +346,11 @@ describe('example to-do app', () => {
       name: 'task1',
       value: true
     }
-    helpers.addNewTask('Task 1')
-    helpers.addNewTask('Task 2')
-    helpers.addNewTask('Task 3')
-    helpers.compeletExistTask('Task 1')
+    helpers.addNewTask(['Task 1','Task 2','Task 3'])
+    
+    helpers.compeletExistTask(['Task 1','Task 3'])
 
-    helpers.compeletExistTask('Task 3')
+    
     // Calculate the total number of tasks (active + completed)
     let totalTasksCount = 0;
     let activeCount = 0;
@@ -389,7 +385,7 @@ describe('example to-do app', () => {
   it('add task "Active" and try to acsses it ', () => {
     // cy.get('.new-todo')
     //   .type('Active {enter}')
-    helpers.addNewTask('Active')
+    helpers.addNewTask(['Active'])
 
     cy.get('.todo-list').within(() => {
 
