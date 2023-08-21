@@ -1,4 +1,13 @@
 import * as helpers from '../todo/helpers'
+const TASK = {
+
+
+}
+const FILTERS = {
+  Active: 'Active',
+  ALL: 'All',
+  Completed: 'Completed'
+}
 
 
 
@@ -21,7 +30,7 @@ describe('example to-do app', () => {
   it('Mark New Added Task as Completed Verify it added to the completed list', () => {
     helpers.addNewTask(['Second Task'])
     helpers.compeletExistTask(['Second Task'])
-    helpers.filterTasks('Completed')
+    helpers.filterTasks(FILTERS.Completed)
     helpers.checkCompleted({ name: 'Second Task', clicked: true })
   });
 
@@ -55,9 +64,9 @@ describe('example to-do app', () => {
       .then(countText => {
         const num = parseInt(countText);
         cy.log(num);
-        helpers.filterTasks('Active')
+        helpers.filterTasks(FILTERS.Active)
         // Verify the number of items in the active todo list
-        cy.get('.main ul li')
+        cy.get(helpers.LOCATORS.items)
           .should('have.length', num);
       });
   });//done
@@ -73,6 +82,7 @@ describe('example to-do app', () => {
 
       // Check that each individual task list item has the class 'completed'
       cy.get('li').each((item) => {
+
         cy.log(item.text())
         cy.wrap(item).should('have.class', 'completed');
       });
@@ -102,7 +112,7 @@ describe('example to-do app', () => {
 
   it('Check Filter "Active"', () => {
     helpers.compeletExistTask(['Pay electric bill'])
-    helpers.filterTasks('Active')
+    helpers.filterTasks(FILTERS.Active)
     // Verify that only active tasks are displayed using within() and each()
     cy.get('.todo-list').within(() => {
       cy.get('li').each(task => {
@@ -117,7 +127,7 @@ describe('example to-do app', () => {
   it('Verify active items count matches the number at the bottom', () => {
     helpers.compeletExistTask(['Pay electric bill'])
 
-    helpers.filterTasks('Active')
+    helpers.filterTasks(FILTERS.Active)
     cy.get('.todo-list li')
       .its('length')
       .then(activeItemCount => {
@@ -134,15 +144,15 @@ describe('example to-do app', () => {
   it('Check Fillter "Completed"', () => {
     helpers.addNewTask(['Task 1', 'Task 2', 'Task 3'])
     helpers.compeletExistTask(['Task 1', 'Task 2', 'Task 3'])
-    helpers.filterTasks('Completed')
+    helpers.filterTasks(FILTERS.Completed)
     cy.get('.todo-list ').within(() => {
       cy.get('li').each((item) => {
+
         cy.wrap(item).should('have.class', 'completed');
       });
-
     })
   })//done 
-  it.only('Check "Click All as Completed" button functionality double click.', () => {
+  it('Check "Click All as Completed" button functionality double click.', () => {
     helpers.addNewTask(['New Task']);
     cy.get('.todo-list li')
       .its('length').then(initialActiveCount => {
@@ -151,71 +161,67 @@ describe('example to-do app', () => {
         // Verify that tasks change state based on the behavior expected
         cy.get('.todo-list').within(() => {
           cy.get('li').each(task => {
-            cy.log(cy.wrap(task))
-            if (initialActiveCount > 0) {
-             // cy.log(cy.wrap(task))
-              //helpers.checkCompleted({name:cy.warp(task),clicked: true})
-              cy.wrap(task).should('have.class', 'completed');
-            } else {
-            //  helpers.checkCompleted({name:cy.warp(task),clicked:false})
-              cy.wrap(task).should('not.have.class', 'completed');
-            }
+
+
+            cy.get(task).find('label').then((text) => {
+              let taskName = text.text()
+              cy.log(taskName)
+
+              helpers.checkCompleted({ name: taskName, clicked: true })
+            })
           });
         });
+      })
 
-        // Double-click again to revert the state
-        cy.get('.main [for="toggle-all"]').click();
+    // Double-click again to revert the state
+    cy.get('.main [for="toggle-all"]').click();
 
-        // Verify that tasks are back to their initial state
-        cy.get('.todo-list').within(() => {
-          cy.get('li').each(task => {
+    // Verify that tasks are back to their initial state
+    cy.get('.todo-list').within(() => {
+      cy.get('li').each(task => {
 
-            cy.log(task.find('.view label'));
+        cy.get(task).find('label').then((text) => {
+          let taskName = text.text()
+          cy.log(taskName)
 
-            if (initialActiveCount > 0) {
-              //  helpers.checkCompleted()
-              cy.wrap(task).should('not.have.class', 'completed');
-            } else {
-              cy.wrap(task).should('have.class', 'completed');
-            }
-          });
+          //  helpers.checkCompleted()
+          helpers.checkCompleted({ name: taskName, clicked: false })
+
         });
       });
-  });
-
-
-
-  it('Check Fillter "ALL" - and Check the count of all tasks', () => {
-    helpers.addNewTask(['Task 1', 'Task 2', 'Task 3'])
-    helpers.compeletExistTask(['Task 1', 'Task 3'])
-    // Calculate the total number of tasks (active + completed)
-    let totalTasksCount = 0;
-    let activeCount = 0;
-    let completedCount = 0;
-    helpers.filterTasks('Active')
-    cy.get('.todo-list li').its('length').then(activeTasksCount => {
-      activeCount = activeTasksCount;
-      helpers.filterTasks('Completed')
-      cy.get('.completed').its('length')
-        // helpers.locaterLength('.completed')
-        .then(completedTasksCount => {
-          completedCount = completedTasksCount;
-          totalTasksCount = activeCount + completedCount;
-          helpers.filterTasks('All')
-          cy.get('.todo-list li').should('have.length', totalTasksCount);
-        });
     });
-  });//done
 
-  it('add task "Active" and try to acsses it ', () => {
-    helpers.addNewTask(['Active'])
-    cy.get('.todo-list').within(() => {
 
-      cy.get('li')
-        .should('contain', 'Active');
+    it.only('Check Fillter "ALL" - and Check the count of all tasks', () => {
+      helpers.addNewTask(['Task 1', 'Task 2', 'Task 3'])
+      helpers.compeletExistTask(['Task 1', 'Task 3'])
+      // Calculate the total number of tasks (active + completed)
+      let totalTasksCount = 0;
+      let activeCount = 0;
+      let completedCount = 0;
+      helpers.filterTasks(FILTERS.Active)
+      cy.get('.todo-list li').its('length').then(activeTasksCount => {
+        activeCount = activeTasksCount;
+        helpers.filterTasks(FILTERS.Completed)
+        cy.get('.completed').its('length')
+          // helpers.locaterLength('.completed')
+          .then(completedTasksCount => {
+            completedCount = completedTasksCount;
+            totalTasksCount = activeCount + completedCount;
+            helpers.filterTasks(FILTERS.ALL)
+            cy.get(helpers.LOCATORS.items).should('have.length', totalTasksCount);
+          });
+      });
+    });//done
 
-    });
-    helpers.checkTaskexistance('Active')
+    it('add task "Active" and try to acsses it ', () => {
+      helpers.addNewTask(['Active'])
+      cy.get('.todo-list').within(() => {
+        cy.get('li')
+          .should('contain', 'Active');
+      });
+      helpers.checkTaskexistance('Active')
+    })
+
   })
-
 })

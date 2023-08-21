@@ -1,6 +1,9 @@
 export const LOCATORS = {
     newTodo: '.new-todo',
-    items: '.main ul li'
+    items: '.main ul li',
+    filters:'.filters li',
+    deletButton:'button.destroy',
+    editAbleItem:'.main ul li input.edit'
 }
 
 export const addNewTask = (tasks) => {
@@ -10,7 +13,6 @@ export const addNewTask = (tasks) => {
             .type(task)
             .type('{enter}')
     });
-
 }
 
 export const compeletExistTask = (tasks) => {
@@ -24,48 +26,45 @@ export const compeletExistTask = (tasks) => {
 }
 
 export const filterTasks = (filterName) => {
-    cy.contains('.filters li', filterName)
+    cy.contains(LOCATORS.filters, filterName)
         .click()
-
 }
 
 export const checkTaskexistance = (taskName, shouldExist = true) => {
-    let status = shouldExist ?'contain':'not.contain'
-    cy.get('.main ul li')
+    let status = shouldExist ? 'contain' : 'not.contain'
+    cy.get(LOCATORS.items)
         .should(status, taskName)
 }
 
 export const deleteTask = (taskName) => {
-    cy.get('section.main ul.todo-list li')
+    cy.get(LOCATORS.items)
         .contains(taskName)
         .parent()
-        .find('button.destroy')
+        .find(LOCATORS.deletButton)
         .click({ force: true })
 }
 
 export const editTaskName = (taskName, newTaskName) => {
-    cy.get('.main ul li')
+    cy.get(LOCATORS.items)
         .contains(taskName)
         .parent()
         .dblclick()
-    cy.get('.main ul li input.edit')
+    cy.get(LOCATORS.editAbleItem)
         .clear()
         .type(newTaskName + '{enter}')
-
-
 };
 //accept object  
 export const checkCompleted = (task) => {
     let statusclass = task.clicked ? 'have.class' : 'not.have.class'
     let statusclick = task.clicked ? 'be.checked' : 'not.be.checked'
-
-    cy.contains('.todo-list li', task.name)
+    cy.get(LOCATORS.items)
+        // .contains(task.name)
         .should(statusclass, 'completed')
         .parent()
         .within(() => {
             cy.get('[type="checkbox"]')
                 .should(statusclick);
-        });
+        })
 };
 
 export const checkButtonAvailabilty = (shouldExist = true) => {
