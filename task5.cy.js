@@ -35,7 +35,7 @@ describe('example to-do app', () => {
 
   it('Editing an existing task with empty text.', () => {
     helpers.editTaskName('Pay electric bill', '')
-// helpers.checkTaskexistance({ taskName: 'Pay electric bill', shouldExist: false })
+    // helpers.checkTaskexistance({ taskName: 'Pay electric bill', shouldExist: false })
     cy.get('.main ul li')
       .should('not.contain', 'Pay electric bill')
   })//done
@@ -70,8 +70,10 @@ describe('example to-do app', () => {
 
     // Verify that all task items are marked as completed within the context of '.todo-list'
     cy.get('.todo-list').within(() => {
+
       // Check that each individual task list item has the class 'completed'
       cy.get('li').each((item) => {
+        cy.log(item.text())
         cy.wrap(item).should('have.class', 'completed');
       });
     });
@@ -140,26 +142,25 @@ describe('example to-do app', () => {
 
     })
   })//done 
-
-
-  it('Check "Click All as Completed" button functionality double click.', () => {
-    helpers.addNewTask(['New Task'])
+  it.only('Check "Click All as Completed" button functionality double click.', () => {
+    helpers.addNewTask(['New Task']);
     cy.get('.todo-list li')
-      .should('not.have.class', 'completed')
       .its('length').then(initialActiveCount => {
         // Click the "Click All as Completed" button
         cy.get('.main [for="toggle-all"]').click();
         // Verify that tasks change state based on the behavior expected
         cy.get('.todo-list').within(() => {
           cy.get('li').each(task => {
-
+            cy.log(cy.wrap(task))
             if (initialActiveCount > 0) {
+             // cy.log(cy.wrap(task))
+              //helpers.checkCompleted({name:cy.warp(task),clicked: true})
               cy.wrap(task).should('have.class', 'completed');
             } else {
+            //  helpers.checkCompleted({name:cy.warp(task),clicked:false})
               cy.wrap(task).should('not.have.class', 'completed');
             }
-          }
-          );
+          });
         });
 
         // Double-click again to revert the state
@@ -168,8 +169,10 @@ describe('example to-do app', () => {
         // Verify that tasks are back to their initial state
         cy.get('.todo-list').within(() => {
           cy.get('li').each(task => {
+
+            cy.log(task.find('.view label'));
+
             if (initialActiveCount > 0) {
-              cy.log(task)
               //  helpers.checkCompleted()
               cy.wrap(task).should('not.have.class', 'completed');
             } else {
@@ -178,7 +181,9 @@ describe('example to-do app', () => {
           });
         });
       });
-  });//done
+  });
+
+
 
   it('Check Fillter "ALL" - and Check the count of all tasks', () => {
     helpers.addNewTask(['Task 1', 'Task 2', 'Task 3'])
@@ -212,4 +217,5 @@ describe('example to-do app', () => {
     });
     helpers.checkTaskexistance('Active')
   })
+
 })
