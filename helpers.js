@@ -3,7 +3,8 @@ export const LOCATORS = {
     items: '.main ul li',
     filters:'.filters li',
     deletButton:'button.destroy',
-    editAbleItem:'.main ul li input.edit'
+    editAbleItem:'.main ul li input.edit',
+    toggleAllButton:'.main [for="toggle-all"]'
 }
 
 export const addNewTask = (tasks) => {
@@ -59,8 +60,9 @@ export const checkCompleted = (task) => {
     let statusclick = task.clicked ? 'be.checked' : 'not.be.checked'
     cy.get(LOCATORS.items)
         // .contains(task.name)
-        .should(statusclass, 'completed')
+       
         .parent()
+        .should(statusclass, 'completed')
         .within(() => {
             cy.get('[type="checkbox"]')
                 .should(statusclick);
