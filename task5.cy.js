@@ -139,11 +139,6 @@ describe('example to-do app', () => {
     helpers.checkTaskexistance(TASK.activeTask, true)
   })
 
-  it('add task "Active" and try to acsses it ', () => {
-    helpers.addNewTask([TASK.activeTask])
-    helpers.checkTaskexistance(TASK.activeTask, true)
-  })
-
   it('Check Fillter "ALL" - and Check the count of all tasks', () => {
     helpers.addNewTask([TASK.task1, TASK.task2, TASK.task3])
     helpers.compeletExistTask([TASK.task1, TASK.task3])

@@ -13,7 +13,8 @@ export const LOCATORS = {
     item:'li',
    length: 'length',
    label:'label',
-   text:'text'
+   text:'text',
+   footer:'.footer'
 }
 
 export const addNewTask = (tasks) => {
@@ -71,28 +72,15 @@ export const checkCompleted = (task) => {
     let statusClass = task.clicked ? 'have.class' : 'not.have.class'
     let statusClick = task.clicked ? 'be.checked' : 'not.be.checked'
     cy.get('li').contains(task.name).parent().parent()
-       // cy.should('contain', task.name)
-        // .parent()
         .should(statusClass, 'completed')
         cy.get(LOCATORS.checkkBox)
-               .should(statusClick);
-
-   
-        // .should('contain', task.name)
-        // // .parent()
-        // .should(statusClass, 'completed')
-        // cy.get(LOCATORS.checkkBox)
-        //        .should(statusClick);
-        // .within(() => {
-        //     cy.get(LOCATORS.checkkBox)
-        //         .should(statusClick);
-        // })
+               .should(statusClick)
 }
 
 
 export const checkButtonAvailabilty = (shouldExist = true) => {
     let status = shouldExist ? 'be.visible' : 'not.be.visible'
-    cy.get('.footer').within(() => {
+    cy.get(LOCATORS.footer).within(() => {
         cy.get(LOCATORS.clearCompleted)
             .should(status);
     })
