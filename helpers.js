@@ -1,10 +1,19 @@
 export const LOCATORS = {
+    itemsList: '.main ul ',
     newTodo: '.new-todo',
-    items: '.main ul li',
-    filters:'.filters li',
-    deletButton:'button.destroy',
-    editAbleItem:'.main ul li input.edit',
-    toggleAllButton:'.main [for="toggle-all"]'
+    items: '.main .todo-list li',
+    filters: '.filters li',
+    deletButton: 'button.destroy',
+    editAbleItem: '.main ul li input.edit',
+    toggleAllButton: '.main [for="toggle-all"]',
+    enter: '{enter}',
+    checkkBox: '[type="checkbox"]',
+    activeCount: '.todo-count',
+    clearCompleted: '.clear-completed',
+    item:'li',
+   length: 'length',
+   label:'label',
+   text:'text'
 }
 
 export const addNewTask = (tasks) => {
@@ -12,7 +21,7 @@ export const addNewTask = (tasks) => {
         cy.get(LOCATORS.newTodo)
             .clear()
             .type(task)
-            .type('{enter}')
+            .type(LOCATORS.enter)
     });
 }
 
@@ -21,7 +30,7 @@ export const compeletExistTask = (tasks) => {
         cy.get(LOCATORS.items)
             .contains(task)
             .parent()
-            .find('[type="checkbox"]')
+            .find(LOCATORS.checkkBox)
             .click();
     })
 }
@@ -31,8 +40,11 @@ export const filterTasks = (filterName) => {
         .click()
 }
 
-export const checkTaskexistance = (taskName, shouldExist = true) => {
+export const checkTaskexistance = (taskName, shouldExist) => {
     let status = shouldExist ? 'contain' : 'not.contain'
+
+
+
     cy.get(LOCATORS.items)
         .should(status, taskName)
 }
@@ -52,27 +64,36 @@ export const editTaskName = (taskName, newTaskName) => {
         .dblclick()
     cy.get(LOCATORS.editAbleItem)
         .clear()
-        .type(newTaskName + '{enter}')
+        .type(newTaskName + LOCATORS.enter)
 };
 //accept object  
 export const checkCompleted = (task) => {
-    let statusclass = task.clicked ? 'have.class' : 'not.have.class'
-    let statusclick = task.clicked ? 'be.checked' : 'not.be.checked'
-    cy.get(LOCATORS.items)
-        // .contains(task.name)
-       
-        .parent()
-        .should(statusclass, 'completed')
-        .within(() => {
-            cy.get('[type="checkbox"]')
-                .should(statusclick);
-        })
-};
+    let statusClass = task.clicked ? 'have.class' : 'not.have.class'
+    let statusClick = task.clicked ? 'be.checked' : 'not.be.checked'
+    cy.get('li').contains(task.name).parent().parent()
+       // cy.should('contain', task.name)
+        // .parent()
+        .should(statusClass, 'completed')
+        cy.get(LOCATORS.checkkBox)
+               .should(statusClick);
+
+   
+        // .should('contain', task.name)
+        // // .parent()
+        // .should(statusClass, 'completed')
+        // cy.get(LOCATORS.checkkBox)
+        //        .should(statusClick);
+        // .within(() => {
+        //     cy.get(LOCATORS.checkkBox)
+        //         .should(statusClick);
+        // })
+}
+
 
 export const checkButtonAvailabilty = (shouldExist = true) => {
     let status = shouldExist ? 'be.visible' : 'not.be.visible'
     cy.get('.footer').within(() => {
-        cy.get('.clear-completed')
+        cy.get(LOCATORS.clearCompleted)
             .should(status);
     })
 }
