@@ -25,7 +25,7 @@ export const compeletExistTask = (tasks) => {
 
 }
 
-export const Filter = (filterName) => {
+export const filterTasks = (filterName) => {
     cy.contains('.filters li', filterName)
         .click()
 
@@ -37,54 +37,71 @@ export const checkTaskexistance = (TaskName, shouldExist = true) => {
         .should(status, TaskName)
 }
 
-// export const checkCompleted = (taskText, expectedStatus) => {
-//     let statusclass = expectedStatus ? 'have.class' : 'not.have.class';
-//     let statusclick = expectedStatus ? 'be.checked' : 'not.be.checked';
+export const clearAllCompletedButtonVisibillity = (shouldVisabil = true) => {
+    let status = shouldVisabil ? 'be.visible' : 'not.be.visible'
+    // Verify that "Clear All Completed" button becomes visible within '.footer'
+    cy.get('.footer').within(() => {
+        cy.get('.clear-completed')
+          .should(status);
+    }
+    )}
 
-//     cy.contains('.todo-list li', taskText)
+
+//accept object  
+// export const checkCompleted = (task) => {
+//     let statusclass = task.clicked ? 'have.class' : 'not.have.class'
+//     let statusclick = task.clicked ? 'be.checked' : 'not.be.checked'
+//     //  checkTaskexistance(task.name,true)
+//     cy.get('.todo-list li')
+//         .contains( task.name)
+//     cy.get('.todo-list li')
 //         .should(statusclass, 'completed')
 //         .parent()
 //         .within(() => {
 //             cy.get('[type="checkbox"]')
 //                 .should(statusclick);
-//         });
-
-
-
-
+//         })
 // };
-//accept object  
+
 export const checkCompleted = (task) => {
-    let statusclass = task.clicked ? 'have.class' : 'not.have.class'
-    let statusclick = task.clicked ? 'be.checked' : 'not.be.checked'
-    checkTaskexistance(task.name)
+    // Determine the class and checkbox status based on the 'clicked' property
+    const statusclass = task.clicked ? 'have.class' : 'not.have.class';
+    const statusclick = task.clicked ? 'be.checked' : 'not.be.checked';
+
+    // Find the task in the todo list and perform checks
     cy.contains('.todo-list li', task.name)
-        .should(statusclass, 'completed')
         .parent()
+        .should(statusclass, 'completed') // Check the class based on 'clicked'
+
         .within(() => {
             cy.get('[type="checkbox"]')
-                .should(statusclick);
+                .should(statusclick); // Check the checkbox status based on 'clicked'
         });
 };
 
-
-    // else {
-    //     cy.contains('.todo-list li', taskText)
-    //        // .should('contain', taskText)
-    //         .should('not.have.class', 'completed')
-    //     cy.contains('.todo-list li', taskText)
-    //         .parent()
-    //         .within(() => {
-    //             cy.get('[type="checkbox"]')
-    //                 .should('not.be.checked');
-
-    //         })
-
-    // }
+export const editTaskName = (taskName, newTaskName) => {
+    cy.get('.main ul li')
+        .contains(taskName)
+        .parent()
+        .dblclick()
+    cy.get('.main ul li input.edit')
+        .clear()
+        .type(newTaskName + '{enter}')
 
 
+}
+export const deleteTask = (task) => {
+    cy.get('section.main ul.todo-list li')
+        .contains(task)
+        .parent()
+        .find('button.destroy')
+        .click({ force: true })
+}
 
-// export const locaterLength =(locater) =>{
-// let x = 
-//     cy.get(locater).its('length')
-// }
+
+
+// export const verifyDeleted= (task)=> {
+//      // Verify that the deleted task is not present in the list
+//     cy.get('.main ul li')
+//     .should('not.contain', task);
+// }duplicated to checkTask existance function

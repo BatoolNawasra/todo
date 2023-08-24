@@ -9,142 +9,57 @@ describe('example to-do app', () => {
   })
 
   it('Adding a new task and verify its added in task list', () => {
-    // cy.get('.new-todo')
-    //   .clear()
-    //   .type('First Task')
-    //   .type('{enter}')
     helpers.addNewTask(['First Task'])
-    // Verify that the added task is present in the list
-    cy.get('.main ul ').within(() => {
-      cy.contains('First Task')
-    })
     helpers.checkTaskexistance('First Task')
-    // cy.get('.main ul li ')
-    //   .should('contain', 'First Task')
-    helpers.checkCompleted({name:'First Task', clicked: false })
+    helpers.checkCompleted({ name: 'First Task', clicked: false })
   })//done
 
 
   it('Mark New Added Task as Completed Verify it added to the completed list', () => {
-    // cy.get('.new-todo')
-    // .clear()
-    //.type('Second Task')
-    //.type('{enter}');
     helpers.addNewTask(['Second Task'])
     helpers.compeletExistTask(['Second Task'])
-    // cy.get('.main ul li')
-    //.contains('Second Task')
-    //.parent()
-    //.find('[type="checkbox"]')
-    //.should('exist')
-    //.click();
+    helpers.filterTasks('Completed')
+    helpers.checkCompleted('Second Task', true)
+  });//done
 
 
-    // cy.get('.main ul li')
-    // .contains('Second Task')
-    // .parent()
-    // .within(() => {
-    //   cy.get('[type="checkbox"]').as('checkbox'); // Alias the checkbox element
-    //   })
-    // Verify that the checkbox is checked
-    // cy.get('@checkbox').should('be.checked');
-
-    // Verify that the task appears in the completed list
-    // cy.contains('.filters li', 'Completed')
-    //   .click();
-    helpers.Filter('Completed')
-    // cy.get('.main ul li').should('contain', 'Second Task');
-    helpers.checkCompleted({name:'Second Task', clicked:true})
-  });
-
-
-  it('add task and  Edit its text ', () => {
-    //cy.get('.new-todo')
-    //.clear()
-    //.type('Third Task')
-    //.type('{enter}')
-
+  it('add task and Edit its text ', () => {
     helpers.addNewTask(['Third Task'])
-
-    cy.get('.main ul li')
-      .contains('Third Task')
-      .parent()
-      .dblclick()
-
-    cy.get('.main ul li input.edit')
-      .clear()
-      .type('Edited Successfully {enter}')
-
-    // Verify that the edited task is present in the list
-    //cy.get('.main ul li').should('contain', 'Edited Successfully')
+    helpers.editTaskName('Third Task', 'Edited Successfully')
     helpers.checkTaskexistance('Edited Successfully')
   })//done
 
 
   it('Editing an existing task with empty text.', () => {
-
-    // Double-click to enter edit mode for the task
-    cy.get('.main ul li')
-      .contains('Pay electric bill')
-      .dblclick()
-
-    // Clear the existing text and save with empty text
-    cy.get('.main ul li.editing input.edit')
-      .clear()
-      .type('{enter}')
-
-    // Verify that the task is deleted
-    cy.get('.main ul li')
-      .should('not.contain', 'Pay electric bill')
-    //  .should('not.exist', 'Pay electric bill') for dom elements not text 
+    helpers.editTaskName('Pay electric bill', '')
+    // helpers.verifyDeleted('Pay electric bill')
+    helpers.checkTaskexistance('Pay electric bill', false)
   })//done
 
 
   it('Deleting a task.', () => {
-    // cy.get('.new-todo')
-    // .clear()
-    //.type('Fifth Task')
-    //.type('{enter}')
     helpers.addNewTask(['Fifth Task'])
-
-    // Click the delete button even if it's hidden
-    cy.get('section.main ul.todo-list li')
-      .contains('Fifth Task')
-      .parent()
-      .find('button.destroy')
-      .click({ force: true }) // Click with {force: true} to interact with hidden element
-    // Verify that the deleted task is not present in the list
-    cy.get('.main ul li')
-      .should('not.contain', 'Fifth Task');
-
+    helpers.deleteTask('Fifth Task')
+    helpers.checkTaskexistance('Fifth Task', false)
   })//done
 
 
 
 
   it('verify number of items in the active todo list correct ', () => {
-    //  cy.get('.new-todo')
-    //.clear()
-    //  .type('Sixth Task ')
-    //.type('{enter}')
     helpers.addNewTask(['Sixth Task'])
     // Get the number of active items from the todo count
     cy.get('.todo-count')
       .invoke('text')
       .then(countText => {
         const num = parseInt(countText);
-
         cy.log(num);
-
-        // Switch to the "Active" filter
-        // cy.contains('.filters li', 'Active')
-        //   .click();
-
+        helpers.filterTasks('Active')
         // Verify the number of items in the active todo list
         cy.get('.main ul li')
           .should('have.length', num);
       });
-  });//done
+  });
 
 
   it('Check "Click All as Completed" button functionality one click.', () => {
@@ -157,9 +72,10 @@ describe('example to-do app', () => {
       // Check that each individual task list item has the class 'completed'
       cy.get('li').each((item) => {
         cy.wrap(item).should('have.class', 'completed');
+        // helpers.checkCompleted({ name: item.textContent, clicked: true })
       });
     });
-  });//done
+  });
 
 
 
@@ -167,233 +83,160 @@ describe('example to-do app', () => {
   it('"Clear All Completed" button Check visibility when changing from hidden to visible', () => {
 
     // Verify that "Clear All Completed" button is initially hidden
-    cy.get('.clear-completed')
-      .should('not.be.visible');
-    // Mark a task as completed
-    // cy.get('.toggle')
-    //   .first()
-    //   .check();
+    helpers.clearAllCompletedButtonVisibillity(false)
     helpers.compeletExistTask(['Pay electric bill'])
-
     // Verify that "Clear All Completed" button becomes visible within '.footer'
-    cy.get('.footer').within(() => {
-      cy.get('.clear-completed')
-        .should('be.visible');
-    });
-  });//done
+    helpers.clearAllCompletedButtonVisibillity(true)
+  });
+});//done
 
-  it('"Clear All Completed" button Check visibility when changing from visible to hidden', () => {
+it('"Clear All Completed" button Check visibility when changing from visible to hidden', () => {
+  // Mark all tasks as completed using "Click All as Completed" button
+  cy.get('.main [for="toggle-all"]')
+    .click();
+
+  // Verify that "Clear All Completed" button is visible within '.footer'
+ helpers.clearAllCompletedButtonVisibillity(true)
+  // Uncheck tasks to make them incomplete
+  cy.get('.toggle')
+    .uncheck();
+
+  // Verify that "Clear All Completed" button is hidden again within '.footer'
+ helpers.clearAllCompletedButtonVisibillity(false)
+});
 
 
-    // Mark all tasks as completed using "Click All as Completed" button
-    cy.get('.main [for="toggle-all"]')
-      .click();
 
-    // Verify that "Clear All Completed" button is visible within '.footer'
-    cy.get('.footer').within(() => {
-      cy.get('.clear-completed')
-        .should('be.visible');
-    });
 
-    // Uncheck tasks to make them incomplete
-    cy.get('.toggle')
-      .uncheck();
 
-    // Verify that "Clear All Completed" button is hidden again within '.footer'
-    cy.get('.footer').within(() => {
-      cy.get('.clear-completed')
-        .should('not.be.visible');
+it('Check Filter "Active"', () => {
+  helpers.compeletExistTask(['Pay electric bill'])
+  helpers.filterTasks('Active')
+  // Verify that only active tasks are displayed using within() and each()
+  cy.get('.todo-list').within(() => {
+    cy.get('li').each(task => {
+      //helpers.ckeckcompleted(task,'fales')
+      cy.wrap(task).should('not.have.class', 'completed');
     });
   });
+});//done
 
 
 
+it('Verify active items count matches the number at the bottom', () => {
+  // Mark some tasks as completed
+  helpers.compeletExistTask(['Pay electric bill'])
 
-  it('Check Filter "Active"', () => {
-    // Mark a task as completed
-    // cy.get('.toggle')
-    //   .first()
-    //   .check();
-    helpers.compeletExistTask(['Pay electric bill'])
+  // Click on the "Active" filter
+  helpers.filterTasks('Active')
+  // Count the number of active tasks in the list
+  cy.get('.todo-list li')
+    .its('length')
+    .then(activeItemCount => {
+      // Extract the number from the text at the bottom
+      cy.get('.todo-count')
+        .invoke('text')
+        .then(bottomText => {
+          const num = parseInt(bottomText.match(/\d+/)[0]);
 
-    // Click on the "Active" filter
-    // cy.contains('.filters li', 'Active')
-    //   .click();
-    helpers.Filter('Active')
-    // Verify that only active tasks are displayed using within() and each()
-    cy.get('.todo-list').within(() => {
-      cy.get('li').each(task => {
-        //helpers.ckeckcompleted(task,'fales')
-        cy.wrap(task).should('not.have.class', 'completed');
-      });
-    });
-  });//done
-
-
-
-  it('Verify active items count matches the number at the bottom', () => {
-    // Mark some tasks as completed
-    // cy.get('.toggle')
-    //   .first()
-    //   .check()
-    helpers.compeletExistTask(['Pay electric bill'])
-
-    // Click on the "Active" filter
-    // cy.contains('.filters li', 'Active')
-    //   .click()
-    helpers.Filter('Active')
-    // Count the number of active tasks in the list
-    cy.get('.todo-list li')
-      .its('length')
-      .then(activeItemCount => {
-        // Extract the number from the text at the bottom
-        cy.get('.todo-count')
-          .invoke('text')
-          .then(bottomText => {
-            const num = parseInt(bottomText.match(/\d+/)[0]);
-
-            // Compare the numbers
-            expect(activeItemCount).to.equal(num);
-          });
-      });
-  });//done
-
-
-  it('Check Fillter "Completed"', () => {
-    // Add three new tasks and mark them as completed
-    // cy.get('.new-todo')
-    //   .type('Task 1{enter}')
-    // .type('Task 2{enter}')
-    //.type('Task 3{enter}')
-    helpers.addNewTask(['Task 1','Task 2','Task 3'])
-    helpers.compeletExistTask(['Task 1','Task 2','Task 3'])
-    
-    // cy.contains('.filters li', 'Completed')
-    //   .click() // go to completed tasks page 
-    helpers.Filter('Completed')
-    // Verify that only completed tasks are displayed
-    cy.get('.todo-list ').within(() => {
-      cy.get('li').each((item) => {
-        cy.wrap(item).should('have.class', 'completed');
-      });
-
-    })
-  })//done 
-
-
-  it('Check "Click All as Completed" button functionality double click.', () => {
-    // cy.get('.new-todo')
-    //   .clear()
-    //   .type('New Task {enter}')
-
-    helpers.addNewTask(['New Task'])
-    // Count the number of active tasks initially
-    cy.get('.todo-list li')
-      .should('not.have.class', 'completed')
-      .its('length').then(initialActiveCount => {
-        // Click the "Click All as Completed" button
-        cy.get('.main [for="toggle-all"]').click();
-
-        // Verify that tasks change state based on the behavior expected
-        cy.get('.todo-list').within(() => {
-          cy.get('li').each(task => {
-
-            if (initialActiveCount > 0) {
-              cy.wrap(task).should('have.class', 'completed');
-            } else {
-              cy.wrap(task).should('not.have.class', 'completed');
-            }
-          }
-          );
-        });
-
-        // Double-click again to revert the state
-        cy.get('.main [for="toggle-all"]').click();
-
-        // Verify that tasks are back to their initial state
-        cy.get('.todo-list').within(() => {
-          cy.get('li').each(task => {
-            if (initialActiveCount > 0) {
-              cy.wrap(task).should('not.have.class', 'completed');
-            } else {
-              cy.wrap(task).should('have.class', 'completed');
-            }
-          });
-        });
-      });
-  });//done
-
-  it('Check Fillter "ALL" - and Check the count of all tasks', () => {
-    // Add some tasks
-    // cy.get('.new-todo')
-    //   .type('Task 1{enter}')
-    //   .type('Task 2{enter}')
-    //   .type('Task 3{enter}')
-    //   cy.get('.main ul li')
-    //   .contains('Task 1')
-    //   .parent()
-    //   .find('[type="checkbox"]')
-    //   .should('exist')
-    //   .click();
-    //   cy.get('.main ul li')
-    //   .contains('Task 3')
-    //   .parent()
-    //   .find('[type="checkbox"]')
-    //   .should('exist')
-    //   .click();  // Mark random tasks as completed
-
-    let task = {
-      name: 'task1',
-      value: true
-    }
-    helpers.addNewTask(['Task 1','Task 2','Task 3'])
-    
-    helpers.compeletExistTask(['Task 1','Task 3'])
-
-    
-    // Calculate the total number of tasks (active + completed)
-    let totalTasksCount = 0;
-    let activeCount = 0;
-    let completedCount = 0;
-
-    // Visit the "Active" filter
-    //  cy.contains('.filters li', 'Active')
-    //    .click();
-    helpers.Filter('Active')
-
-    cy.get('.todo-list li').its('length').then(activeTasksCount => {
-      activeCount = activeTasksCount;
-      // Visit the "Completed" filter
-      // cy.contains('.filters li', 'Completed')
-      //   .click();
-      helpers.Filter('Completed')
-      cy.get('.completed').its('length')
-        // helpers.locaterLength('.completed')
-        .then(completedTasksCount => {
-          completedCount = completedTasksCount;
-          totalTasksCount = activeCount + completedCount;
-          // Visit the "All" filter
-          // cy.contains('.filters li', 'All')
-          //   .click();
-          helpers.Filter('All')
-          cy.get('.todo-list li').should('have.length', totalTasksCount);
-
+          // Compare the numbers
+          expect(activeItemCount).to.equal(num);
         });
     });
-  });//done
+});//done
 
-  it('add task "Active" and try to acsses it ', () => {
-    // cy.get('.new-todo')
-    //   .type('Active {enter}')
-    helpers.addNewTask(['Active'])
 
-    cy.get('.todo-list').within(() => {
-
-      cy.get('li')
-        .should('contain', 'Active');
-
+it('Check Fillter "Completed"', () => {
+  helpers.addNewTask(['Task 1', 'Task 2', 'Task 3'])
+  helpers.compeletExistTask(['Task 1', 'Task 2', 'Task 3'])
+  helpers.filterTasks('Completed')
+  // Verify that only completed tasks are displayed
+  cy.get('.todo-list ').within(() => {
+    cy.get('li').each((item) => {
+      cy.wrap(item).should('have.class', 'completed');
     });
-    helpers.checkTaskexistance('Active')
+
   })
+})//done 
 
+
+it('Check "Click All as Completed" button functionality double click.', () => {
+
+
+  helpers.addNewTask(['New Task'])
+  // Count the number of active tasks initially
+  cy.get('.todo-list li')
+    .should('not.have.class', 'completed')
+    .its('length').then(initialActiveCount => {
+      // Click the "Click All as Completed" button
+      cy.get('.main [for="toggle-all"]').click();
+
+      // Verify that tasks change state based on the behavior expected
+      cy.get('.todo-list').within(() => {
+        cy.get('li').each(task => {
+
+          if (initialActiveCount > 0) {
+            cy.wrap(task).should('have.class', 'completed');
+          } else {
+            cy.wrap(task).should('not.have.class', 'completed');
+          }
+        }
+        );
+      });
+
+      // Double-click again to revert the state
+      cy.get('.main [for="toggle-all"]').click();
+
+      // Verify that tasks are back to their initial state
+      cy.get('.todo-list').within(() => {
+        cy.get('li').each(task => {
+          if (initialActiveCount > 0) {
+            cy.wrap(task).should('not.have.class', 'completed');
+          } else {
+            cy.wrap(task).should('have.class', 'completed');
+          }
+        });
+      });
+    });
+});//done
+
+it('Check Fillter "ALL" - and Check the count of all tasks', () => {
+  let task = {
+    name: 'task1',
+    value: true
+  }
+  helpers.addNewTask(['Task 1', 'Task 2', 'Task 3'])
+
+  helpers.compeletExistTask(['Task 1', 'Task 3'])
+
+
+  // Calculate the total number of tasks (active + completed)
+  let totalTasksCount = 0;
+  let activeCount = 0;
+  let completedCount = 0;
+
+  // Visit the "Active" filter
+  helpers.filterTasks('Active')
+
+  cy.get('.todo-list li').its('length').then(activeTasksCount => {
+    activeCount = activeTasksCount;
+    // Visit the "Completed" filter
+    helpers.filterTasks('Completed')
+    cy.get('.completed').its('length')
+      // helpers.locaterLength('.completed')
+      .then(completedTasksCount => {
+        completedCount = completedTasksCount;
+        totalTasksCount = activeCount + completedCount;
+        helpers.filterTasks('All')
+        cy.get('.todo-list li').should('have.length', totalTasksCount);
+
+      });
+  });
+});//done
+
+it('add task "Active" and try to acsses it ', () => {
+  helpers.addNewTask(['Active'])
+  helpers.checkTaskexistance('Active')
 })
+
+
